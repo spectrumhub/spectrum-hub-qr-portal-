@@ -1,0 +1,803 @@
+<!-- ═══════════════════════════════════════════════════════════════
+     SPECTRUM HUB — Trailer Portal (WordPress-Compatible)
+     Paste into a WordPress page using the "Custom HTML" block.
+     Do NOT use the Visual/Classic editor — use the HTML block only.
+     ═══════════════════════════════════════════════════════════════ -->
+
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<style>
+/* All styles scoped to #sh-portal to avoid WordPress theme conflicts */
+#sh-portal {
+  --sh-bg: #0b0e14;
+  --sh-surface: #13171f;
+  --sh-surface2: #1a1f2b;
+  --sh-border: rgba(255,255,255,0.07);
+  --sh-accent: #00c2ff;
+  --sh-accent2: #ff6b2b;
+  --sh-gold: #f5c842;
+  --sh-green: #00e87a;
+  --sh-text: #e8eaf0;
+  --sh-muted: #636880;
+  --sh-radius: 14px;
+  display: block;
+  background: var(--sh-bg);
+  color: var(--sh-text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+  box-sizing: border-box;
+}
+#sh-portal *, #sh-portal *::before, #sh-portal *::after {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  margin: 0;
+  padding: 0;
+}
+#sh-portal a { text-decoration: none; color: inherit; }
+#sh-portal h2, #sh-portal h3 { font-weight: normal; }
+
+/* Background glow */
+#sh-portal::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(0,194,255,0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 80% 90%, rgba(255,107,43,0.08) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── VIEWS ── */
+#sh-portal .sh-view { display: none !important; position: relative; z-index: 1; }
+#sh-portal .sh-view.active { display: block !important; }
+
+/* ── HOME VIEW ── */
+#sh-portal #sh-view-home { display: none !important; flex-direction: column; align-items: center; padding: 0 20px 40px; min-height: 100vh; }
+#sh-portal #sh-view-home.active { display: flex !important; }
+
+#sh-portal .sh-home-header { width: 100%; max-width: 480px; padding: 28px 0 0; display: flex; align-items: center; justify-content: space-between; }
+#sh-portal .sh-logo-mark { display: flex; align-items: center; gap: 10px; }
+#sh-portal .sh-logo-hex {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--sh-accent), #0066ff);
+  clip-path: polygon(50% 0%,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Bebas Neue', sans-serif; font-size: 16px; color: #fff; letter-spacing: .05em;
+}
+#sh-portal .sh-logo-text {
+  font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: .08em;
+  background: linear-gradient(90deg, var(--sh-accent), #fff);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+#sh-portal .sh-trailer-badge {
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  background: rgba(0,194,255,.1); border: 1px solid rgba(0,194,255,.25);
+  color: var(--sh-accent); padding: 4px 10px; border-radius: 20px; letter-spacing: .1em;
+}
+
+/* Trailer card */
+#sh-portal .sh-trailer-card {
+  width: 100%; max-width: 480px; margin-top: 24px;
+  background: var(--sh-surface); border: 1px solid var(--sh-border);
+  border-radius: var(--sh-radius); padding: 20px 22px; position: relative; overflow: hidden;
+}
+#sh-portal .sh-trailer-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--sh-accent), var(--sh-accent2));
+}
+#sh-portal .sh-tc-row { display: flex; justify-content: space-between; align-items: flex-start; }
+#sh-portal .sh-tc-unit { font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: .05em; color: #fff; line-height: 1; }
+#sh-portal .sh-tc-label { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--sh-muted); letter-spacing: .15em; text-transform: uppercase; margin-top: 2px; }
+#sh-portal .sh-tc-right { text-align: right; }
+#sh-portal .sh-status-dot { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--sh-green); font-weight: 500; }
+#sh-portal .sh-status-dot::before {
+  content: ''; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--sh-green); box-shadow: 0 0 8px var(--sh-green); animation: sh-pulse 2s infinite;
+}
+@keyframes sh-pulse {
+  0%,100% { opacity:1; transform:scale(1); }
+  50%      { opacity:.5; transform:scale(1.3); }
+}
+#sh-portal .sh-tc-meta { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--sh-border); }
+#sh-portal .sh-mi-val { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--sh-text); font-weight: 500; }
+#sh-portal .sh-mi-key { font-size: 10px; color: var(--sh-muted); margin-top: 2px; }
+
+/* Section heading */
+#sh-portal .sh-section-heading {
+  width: 100%; max-width: 480px; margin-top: 32px;
+  font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: .2em;
+  text-transform: uppercase; color: var(--sh-muted); display: flex; align-items: center; gap: 10px;
+}
+#sh-portal .sh-section-heading::after { content: ''; flex: 1; height: 1px; background: var(--sh-border); }
+
+/* Role grid */
+#sh-portal .sh-role-grid { width: 100%; max-width: 480px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+#sh-portal .sh-role-card {
+  background: var(--sh-surface); border: 1px solid var(--sh-border);
+  border-radius: var(--sh-radius); padding: 22px 18px 20px;
+  cursor: pointer; transition: all .22s ease; position: relative; overflow: hidden; user-select: none;
+}
+#sh-portal .sh-role-card::after {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(circle at 50% 0%, var(--sh-card-color, #00c2ff), transparent 70%);
+  opacity: 0; transition: opacity .3s;
+}
+#sh-portal .sh-role-card:hover { border-color: var(--sh-card-color, var(--sh-accent)); transform: translateY(-2px); }
+#sh-portal .sh-role-card:hover::after { opacity: .08; }
+#sh-portal .sh-role-card:active { transform: scale(0.97); }
+#sh-portal .sh-role-card.sh-client  { --sh-card-color: #00c2ff; }
+#sh-portal .sh-role-card.sh-driver  { --sh-card-color: #00e87a; }
+#sh-portal .sh-role-card.sh-broker  { --sh-card-color: #f5c842; }
+#sh-portal .sh-role-card.sh-general { --sh-card-color: #ff6b2b; }
+#sh-portal .sh-rc-icon { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 14px; position: relative; z-index: 1; }
+#sh-portal .sh-role-card.sh-client .sh-rc-icon  { background: rgba(0,194,255,.12); }
+#sh-portal .sh-role-card.sh-driver .sh-rc-icon  { background: rgba(0,232,122,.12); }
+#sh-portal .sh-role-card.sh-broker .sh-rc-icon  { background: rgba(245,200,66,.12); }
+#sh-portal .sh-role-card.sh-general .sh-rc-icon { background: rgba(255,107,43,.12); }
+#sh-portal .sh-rc-title { font-weight: 600; font-size: 15px; line-height: 1.2; position: relative; z-index: 1; }
+#sh-portal .sh-rc-sub { font-size: 11px; color: var(--sh-muted); margin-top: 5px; line-height: 1.4; position: relative; z-index: 1; }
+#sh-portal .sh-rc-arrow { position: absolute; bottom: 14px; right: 16px; font-size: 16px; color: var(--sh-card-color, var(--sh-muted)); opacity: .5; transition: opacity .2s, transform .2s; z-index: 1; }
+#sh-portal .sh-role-card:hover .sh-rc-arrow { opacity: 1; transform: translateX(3px); }
+
+/* UVSKY strip */
+#sh-portal .sh-uvsky-strip {
+  width: 100%; max-width: 480px; margin-top: 20px;
+  background: var(--sh-surface); border: 1px solid var(--sh-border);
+  border-radius: 10px; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between;
+}
+#sh-portal .sh-uvsky-left { display: flex; align-items: center; gap: 10px; }
+#sh-portal .sh-uvsky-icon { width: 30px; height: 30px; background: rgba(245,200,66,.12); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+#sh-portal .sh-uvsky-name { font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500; color: var(--sh-gold); }
+#sh-portal .sh-uvsky-sub { font-size: 10px; color: var(--sh-muted); margin-top: 1px; }
+#sh-portal .sh-uvsky-sync { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--sh-green); display: flex; align-items: center; gap: 5px; }
+#sh-portal .sh-uvsky-sync::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--sh-green); box-shadow: 0 0 6px var(--sh-green); animation: sh-pulse 2s infinite; }
+
+/* ── DETAIL VIEWS ── */
+#sh-portal .sh-detail-view { min-height: 100vh; display: none !important; flex-direction: column; }
+#sh-portal .sh-detail-view.active { display: flex !important; }
+#sh-portal .sh-dv-header { padding: 20px 20px 0; display: flex; align-items: center; gap: 14px; }
+#sh-portal .sh-back-btn {
+  width: 36px; height: 36px; background: var(--sh-surface); border: 1px solid var(--sh-border);
+  border-radius: 10px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 16px; transition: all .18s; color: var(--sh-text); line-height: 1;
+}
+#sh-portal .sh-back-btn:hover { background: var(--sh-surface2); }
+#sh-portal .sh-dv-header-title { font-weight: 600; font-size: 16px; }
+#sh-portal .sh-dv-header-sub { font-size: 12px; color: var(--sh-muted); margin-top: 1px; }
+#sh-portal .sh-dv-hero { margin: 20px 20px 0; border-radius: var(--sh-radius); padding: 28px 24px; position: relative; overflow: hidden; }
+#sh-portal .sh-dv-hero.sh-client-hero  { background: linear-gradient(135deg,#001a2e,#003d5c); border: 1px solid rgba(0,194,255,.2); }
+#sh-portal .sh-dv-hero.sh-driver-hero  { background: linear-gradient(135deg,#001a0e,#003d1c); border: 1px solid rgba(0,232,122,.2); }
+#sh-portal .sh-dv-hero.sh-broker-hero  { background: linear-gradient(135deg,#1a1600,#3d3200); border: 1px solid rgba(245,200,66,.2); }
+#sh-portal .sh-dv-hero.sh-general-hero { background: linear-gradient(135deg,#1a0a00,#3d1a00); border: 1px solid rgba(255,107,43,.2); }
+#sh-portal .sh-dh-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: .2em; text-transform: uppercase; margin-bottom: 8px; opacity: .6; }
+#sh-portal .sh-dh-title { font-family: 'Bebas Neue', sans-serif; font-size: 38px; letter-spacing: .04em; line-height: 1; }
+#sh-portal .sh-dh-desc { font-size: 13px; opacity: .75; margin-top: 10px; max-width: 300px; line-height: 1.5; }
+#sh-portal .sh-dh-badge { position: absolute; top: 20px; right: 20px; font-family: 'DM Mono', monospace; font-size: 10px; padding: 5px 12px; border-radius: 20px; border: 1px solid; }
+#sh-portal .sh-client-hero  .sh-dh-badge { color: var(--sh-accent);  border-color: rgba(0,194,255,.3);  background: rgba(0,194,255,.08); }
+#sh-portal .sh-driver-hero  .sh-dh-badge { color: var(--sh-green);   border-color: rgba(0,232,122,.3);  background: rgba(0,232,122,.08); }
+#sh-portal .sh-broker-hero  .sh-dh-badge { color: var(--sh-gold);    border-color: rgba(245,200,66,.3); background: rgba(245,200,66,.08); }
+#sh-portal .sh-general-hero .sh-dh-badge { color: var(--sh-accent2); border-color: rgba(255,107,43,.3); background: rgba(255,107,43,.08); }
+
+/* Action list */
+#sh-portal .sh-action-list { padding: 16px 20px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+#sh-portal .sh-action-item {
+  background: var(--sh-surface); border: 1px solid var(--sh-border); border-radius: 12px;
+  padding: 16px 18px; display: flex; align-items: center; gap: 14px;
+  cursor: pointer; text-decoration: none; color: var(--sh-text);
+  transition: all .2s; position: relative; overflow: hidden;
+}
+#sh-portal .sh-action-item::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: var(--sh-item-color, var(--sh-accent)); opacity: 0; transition: opacity .2s;
+}
+#sh-portal .sh-action-item:hover { border-color: rgba(255,255,255,.12); background: var(--sh-surface2); color: var(--sh-text); }
+#sh-portal .sh-action-item:hover::before { opacity: 1; }
+#sh-portal .sh-action-item:active { transform: scale(0.98); }
+#sh-portal .sh-ai-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; background: var(--sh-surface2); }
+#sh-portal .sh-ai-text { flex: 1; }
+#sh-portal .sh-ai-title { font-weight: 500; font-size: 14px; }
+#sh-portal .sh-ai-sub { font-size: 11px; color: var(--sh-muted); margin-top: 3px; line-height: 1.4; }
+#sh-portal .sh-ai-arrow { color: var(--sh-muted); font-size: 14px; }
+
+/* Info strip */
+#sh-portal .sh-info-strip {
+  margin: 0 20px 20px; background: rgba(0,194,255,.05);
+  border: 1px solid rgba(0,194,255,.12); border-radius: 10px;
+  padding: 12px 16px; display: flex; align-items: center; gap: 10px;
+  font-size: 12px; color: rgba(0,194,255,.8);
+}
+#sh-portal .sh-is-icon { font-size: 16px; flex-shrink: 0; }
+
+/* ── QR VIEW ── */
+#sh-portal #sh-view-qr { display: none !important; flex-direction: column; align-items: center; padding: 0 20px 40px; min-height: 100vh; }
+#sh-portal #sh-view-qr.active { display: flex !important; }
+#sh-portal .sh-qr-header { width: 100%; max-width: 480px; padding: 28px 0 0; display: flex; align-items: center; gap: 14px; }
+#sh-portal .sh-qr-section { width: 100%; max-width: 480px; margin-top: 24px; background: var(--sh-surface); border: 1px solid var(--sh-border); border-radius: var(--sh-radius); padding: 28px 24px; text-align: center; }
+#sh-portal .sh-qr-section h2 { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: .06em; margin-bottom: 6px; color: var(--sh-text); }
+#sh-portal .sh-qr-section p { font-size: 13px; color: var(--sh-muted); margin-bottom: 24px; }
+#sh-portal .sh-qr-label { display: block; text-align: left; font-size: 12px; color: var(--sh-muted); margin-bottom: 6px; font-family: 'DM Mono', monospace; letter-spacing: .12em; text-transform: uppercase; }
+#sh-portal #sh-qrcode-container { display: flex; justify-content: center; background: #fff; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+#sh-portal #sh-qrcode-container canvas { border-radius: 6px; display: block; }
+#sh-portal .sh-qr-url-display { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--sh-accent); background: rgba(0,194,255,.06); border: 1px solid rgba(0,194,255,.15); border-radius: 8px; padding: 10px 14px; word-break: break-all; margin-bottom: 16px; }
+#sh-portal .sh-qr-trailer-select { width: 100%; background: var(--sh-surface2); border: 1px solid var(--sh-border); border-radius: 8px; color: var(--sh-text); font-family: 'DM Sans', sans-serif; font-size: 14px; padding: 10px 14px; margin-bottom: 14px; cursor: pointer; }
+#sh-portal .sh-qr-btn { width: 100%; background: linear-gradient(135deg, var(--sh-accent), #0066ff); border: none; border-radius: 10px; color: #fff; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600; padding: 14px; cursor: pointer; transition: opacity .2s; margin-top: 4px; }
+#sh-portal .sh-qr-btn:hover { opacity: .88; }
+
+/* Print card */
+#sh-portal .sh-print-card { width: 100%; max-width: 480px; margin-top: 16px; background: var(--sh-surface); border: 1px solid var(--sh-border); border-radius: var(--sh-radius); padding: 20px 24px; }
+#sh-portal .sh-print-card h3 { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: .05em; margin-bottom: 10px; color: var(--sh-gold); }
+#sh-portal .sh-print-specs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12px; }
+#sh-portal .sh-ps-item { display: flex; flex-direction: column; gap: 2px; }
+#sh-portal .sh-ps-key { color: var(--sh-muted); font-size: 10px; }
+#sh-portal .sh-ps-val { color: var(--sh-text); font-weight: 500; font-family: 'DM Mono', monospace; }
+
+/* Bottom nav */
+#sh-portal .sh-bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(11,14,20,.95); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid var(--sh-border); display: flex; padding: 8px 0 20px; z-index: 9999; }
+#sh-portal .sh-bn-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; padding: 6px 0; transition: all .15s; }
+#sh-portal .sh-bn-icon { font-size: 20px; }
+#sh-portal .sh-bn-label { font-size: 10px; color: var(--sh-muted); font-weight: 500; }
+#sh-portal .sh-bn-item.active .sh-bn-label { color: var(--sh-accent); }
+#sh-portal .sh-bn-item.active .sh-bn-icon { filter: drop-shadow(0 0 6px var(--sh-accent)); }
+#sh-portal .sh-nav-spacer { height: 80px; }
+
+/* Modal */
+#sh-portal .sh-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.75); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); z-index: 10000; display: none; align-items: flex-end; justify-content: center; }
+#sh-portal .sh-modal-overlay.open { display: flex; }
+#sh-portal .sh-modal-sheet { background: var(--sh-surface); border: 1px solid var(--sh-border); border-radius: 20px 20px 0 0; padding: 24px 24px 40px; width: 100%; max-width: 520px; animation: sh-slideUp .3s ease; }
+@keyframes sh-slideUp { from { transform:translateY(60px); opacity:0; } to { transform:translateY(0); opacity:1; } }
+#sh-portal .sh-modal-handle { width: 40px; height: 4px; background: var(--sh-border); border-radius: 2px; margin: 0 auto 20px; }
+#sh-portal .sh-modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: .04em; margin-bottom: 6px; color: var(--sh-text); }
+#sh-portal .sh-modal-sub { font-size: 13px; color: var(--sh-muted); margin-bottom: 20px; }
+#sh-portal .sh-modal-cta { display: block; width: 100%; background: linear-gradient(135deg, var(--sh-accent), #0066ff); color: #fff; text-align: center; text-decoration: none; font-weight: 600; font-size: 15px; padding: 15px; border-radius: 12px; border: none; cursor: pointer; margin-bottom: 10px; transition: opacity .2s; }
+#sh-portal .sh-modal-cta:hover { opacity: .88; color: #fff; }
+#sh-portal .sh-modal-cta.sh-secondary { background: var(--sh-surface2); border: 1px solid var(--sh-border); color: var(--sh-text); }
+</style>
+
+<!-- ═══════════════════════════ PORTAL WRAPPER ═══════════════════════════ -->
+
+<div id="sh-portal">
+
+  <!-- HOME VIEW -->
+
+  <div id="sh-view-home" class="sh-view active">
+    <div class="sh-home-header">
+      <div class="sh-logo-mark">
+        <div class="sh-logo-hex">SH</div>
+        <div class="sh-logo-text">Spectrum Hub</div>
+      </div>
+      <div class="sh-trailer-badge" id="sh-trailer-badge-top">UVSKY LIVE</div>
+    </div>
+    <div class="sh-trailer-card">
+      <div class="sh-tc-row">
+        <div class="sh-tc-left">
+          <div class="sh-tc-unit" id="sh-trailer-unit">TRL-4821</div>
+          <div class="sh-tc-label">Trailer Unit · UVSKY Database</div>
+        </div>
+        <div class="sh-tc-right">
+          <div class="sh-status-dot" id="sh-trailer-status">Active</div>
+          <div style="font-size:11px;color:var(--sh-muted);margin-top:6px;" id="sh-trailer-last-updated">Synced 2m ago</div>
+        </div>
+      </div>
+      <div class="sh-tc-meta">
+        <div class="sh-tc-meta-item">
+          <div class="sh-mi-val" id="sh-meta-type">53' Dry Van</div>
+          <div class="sh-mi-key">Type</div>
+        </div>
+        <div class="sh-tc-meta-item">
+          <div class="sh-mi-val" id="sh-meta-location">Dallas, TX</div>
+          <div class="sh-mi-key">Location</div>
+        </div>
+        <div class="sh-tc-meta-item">
+          <div class="sh-mi-val" id="sh-meta-load">Loaded</div>
+          <div class="sh-mi-key">Status</div>
+        </div>
+      </div>
+    </div>
+    <div class="sh-section-heading">Select Your Role</div>
+    <div class="sh-role-grid">
+      <div class="sh-role-card sh-client" onclick="shShowDetail('client')">
+        <div class="sh-rc-icon">👤</div>
+        <div class="sh-rc-title">Client / Shipper</div>
+        <div class="sh-rc-sub">Track shipment &amp; manage orders</div>
+        <div class="sh-rc-arrow">→</div>
+      </div>
+      <div class="sh-role-card sh-driver" onclick="shShowDetail('driver')">
+        <div class="sh-rc-icon">🚛</div>
+        <div class="sh-rc-title">Driver</div>
+        <div class="sh-rc-sub">Load details, docs &amp; HOS</div>
+        <div class="sh-rc-arrow">→</div>
+      </div>
+      <div class="sh-role-card sh-broker" onclick="shShowDetail('broker')">
+        <div class="sh-rc-icon">📊</div>
+        <div class="sh-rc-title">Broker / Dispatcher</div>
+        <div class="sh-rc-sub">Dispatch, rates &amp; compliance</div>
+        <div class="sh-rc-arrow">→</div>
+      </div>
+      <div class="sh-role-card sh-general" onclick="shShowDetail('general')">
+        <div class="sh-rc-icon">ℹ️</div>
+        <div class="sh-rc-title">General Info</div>
+        <div class="sh-rc-sub">Report, contact &amp; safety</div>
+        <div class="sh-rc-arrow">→</div>
+      </div>
+    </div>
+    <div class="sh-uvsky-strip">
+      <div class="sh-uvsky-left">
+        <div class="sh-uvsky-icon">🛰️</div>
+        <div>
+          <div class="sh-uvsky-name">UVSKY DATABASE</div>
+          <div class="sh-uvsky-sub">Real-time trailer telemetry</div>
+        </div>
+      </div>
+      <div class="sh-uvsky-sync">Live Sync</div>
+    </div>
+    <div class="sh-nav-spacer"></div>
+  </div>
+
+  <!-- CLIENT VIEW -->
+
+  <div id="sh-view-client" class="sh-detail-view sh-view">
+    <div class="sh-dv-header">
+      <div class="sh-back-btn" onclick="shShowHome()">←</div>
+      <div>
+        <div class="sh-dv-header-title">Client / Shipper Portal</div>
+        <div class="sh-dv-header-sub" id="sh-client-trailer-id">Trailer TRL-4821</div>
+      </div>
+    </div>
+    <div class="sh-dv-hero sh-client-hero">
+      <div class="sh-dh-label">Spectrum Hub · Client Access</div>
+      <div class="sh-dh-title">Your Shipment,<br>Live &amp; On Time</div>
+      <div class="sh-dh-desc">Real-time tracking, documents, and direct communication with your carrier.</div>
+      <div class="sh-dh-badge">🔵 Authenticated</div>
+    </div>
+    <div class="sh-action-list">
+      <a href="https://app.spectrumhub.com/client/tracking" target="_blank" rel="noopener" class="sh-action-item" style="--sh-item-color:#00c2ff">
+        <div class="sh-ai-icon">📍</div>
+        <div class="sh-ai-text"><div class="sh-ai-title">Live Shipment Tracking</div><div class="sh-ai-sub">Real-time GPS location · ETA updates · Route map</div></div>
+        <div class="sh-ai-arrow">↗</div>
+      </a>
+      <a href="https://app.spectrumhub.com/client/documents" target="_blank" rel="noopener" class="sh-action-item" style="--sh-item-color:#00c2ff">
+        <div class="sh-ai-icon">📄</div>
+        <div class="sh-ai-text"><div class="sh-ai-title">Documents &amp; BOL</div><div class="sh-ai-sub">Bill of lading, POD, weight tickets</div></div>
+        <div class="sh-ai-arrow">↗</div>
+      </a>
+      <a href="https://app.spectrumhub.com/client/orders" target="_blank" rel="noopener" class="sh-action-item" style="--sh-item-color:#00c2ff">
+        <div class="sh-ai-icon">📦</div>
+        <div class="sh-ai-text"><div class="sh-ai-title">Order Management</div><div class="sh-ai-sub">Manage pickups, deliveries &amp; schedules</div></div>
+        <div class="sh-ai-arrow">↗</div>
+      </a>
+      <a href="https://app.spectrumhub.com/client/invoices" target="_blank" rel="noopener" class="sh-action-item" style="--sh-item-color:#00c2ff">
+        <div class="sh-ai-icon">💳</div>
+        <div class="sh-ai-text"><div class="sh-ai-title">Invoices &amp; Payments</div><div class="sh-ai-sub">View outstanding, paid &amp; dispute invoices</div></div>
+        <div class="sh-ai-arrow">↗</div>
+      </a>
+      <a href="https://app.spectrumhub.com/client/contact" target="_blank" rel="noopener" class="sh-action-item" style="--sh-item-color:#00c2ff">
+        <div class="sh-ai-icon">💬</div>
+        <div class="sh-ai-text"><div class="sh-ai-title">Contact Carrier / Dispatch</div><div class="sh-ai-sub">Direct messaging, call or email your team</div></div>
+        <div class="sh-ai-arrow">↗</div>
+      </a>
+      <a href="https://app.spectrumhub.com/client/dashboard" target="_blank" rel="noopener" class="sh-action-item" style="--sh-item-color:#00c2ff">
+        <div class="sh-ai-icon">🏠</div>
+        <div class="sh-ai-text"><div class="sh-ai-title">Full Client Dashboard</div><div class="sh-ai-sub">Open complete Spectrum Hub platform</div></div>
+        <div class="sh-ai-arrow">↗</div>
+      </a>
+    </div>
+    <div class="sh-info-strip">
+      <span class="sh-is-icon">🛰️</span>
+      UVSKY telemetry connected · Trailer <span id="sh-client-uvsky-id" style="color:#fff;margin:0 4px">TRL-4821</span> · Dallas, TX
+    </div>
+    <div class="sh-nav-spacer"></div>
+  </div>
+
+  <!-- DRIVER VIEW -->
+
+  <div id="sh-view-driver" class="sh-detail-view sh-view">
+    <div class="sh-dv-header">
+      <div class="sh-back-btn" onclick="shShowHome()">←</div>
+      <div>
+        <div class="sh-dv-header-title">Driver Portal</div>
+        <div class="sh-dv-header-sub" id="sh-driver-trailer-id">Trailer TRL-4821</div>
+      </div>
+    </div>
+    <div class="sh-dv-hero sh-driver-hero">
+      <div class="sh-dh-label">Spectrum Hub · Driver Access</div>
+      <div class="sh-dh-title">Everything You<br>Need to Roll</div>
+      <div class="sh-dh-desc">Load details, compliance docs, HOS, and check-in — all in one tap.</div>
+      <div class="sh-dh-badge">🟢 On Duty</div>
+    </div>
+    <div class="sh-action-list">
+      <a href="https://app.spectrumhub.com/driver/load" target="_blank" rel="noopener" class="sh-action-item" style="--sh-item-color:#00e87a">
+        <div class="sh-ai-icon">📋</div>
+        <div class="sh-ai-text"><div class="sh-ai-title">Load Details</div><div class="sh-ai-sub">Pickup/delivery info, weight, commodity</div></div>
+        <div class="sh-ai-arrow">↗</div>
+      </a>
+      <a href="https://app.spectrumhub.com/driver/checkin" target="_blank" rel="noopener" class="sh-action-item" style="--sh-item-color:#00e87a">
+        <div class="sh-ai-icon">✅</div>
+        <div class="sh-ai-text"><div class="sh-ai-title">Trailer Check-In / Inspection</div><div class="sh-ai-sub">Pre-trip DVIR, damage report, photo upload</div></div>
+        <div class="sh-ai-arrow">↗</div>
+      </a>
+      <a href="https://app.spectrumhub.com/driver/eld" target="_blank" rel="noopener" class="sh-action-item" style="--sh-item-color:#00e87a">
+        <div class="sh-ai-icon">⏱️</div>
+        <div class="sh-ai-text"><div class="sh-ai-title">HOS / ELD Sync</div><div class="sh-ai-sub">Hours of service, duty status, violations</div></div>
+        <div class="sh-ai-arrow">↗</div>
+      </a>
+      <a href="https://app.spectrumhub.com/driver/navigation" target="_blank" rel="noopener" class="sh-action-item" style="--sh-item-color:#00e87a">
+        <div class="sh-ai-icon">🗺️</div>
+        <div class="sh-ai-text"><div class="sh-ai-title">Navigation &amp; Route</div><div class="sh-ai-sub">Optimized route, fuel stops, weigh stations</div></div>
+        <div class="sh-ai-arrow">↗</div>
+      </a>
+      <a href="https://app.spectrumhub.com/driver/documents" target="_blank" rel="noopener" class="sh-action-item" style="--sh-item-color:#00e87a">
+        <div class="sh-ai-icon">📎</div>
+        <div class="sh-ai-text"><div class="sh-ai-title">Upload Documents</div><div class="sh-ai-sub">POD signature, lumper receipts, scale tickets</div></div>
+        <div class="sh-ai-arrow">↗</div>
+      </a>
+      <a href="https://app.spectrumhub.com/driver/dashboard" target="_blank" rel="noopener" class="sh-action-item" style="--sh-item-color:#00e87a">
+        <div class="sh-ai-icon">🏠</div>
+        <div class="sh-ai-text"><div class="sh-ai-title">Full Driver Dashboard</div><div class="sh-ai-sub">Open complete Spectrum Hub platform</div></div>
+        <div class="sh-ai-arrow">↗</div>
+      </a>
+    </div>
+    <div class="sh-info-strip" style="border-color:rgba(0,232,122,.15);background:rgba(0,232,122,.05);color:rgba(0,232,122,.8)">
+      <span class="sh-is-icon">🛰️</span>
+      UVSKY · Trailer <span id="sh-driver-uvsky-id" style="color:#fff;margin:0 4px">TRL-4821</span> · Loaded · 53' Dry Van
+    </div>
+    <div class="sh-nav-spacer"></div>
+  </div>
+
+  <!-- BROKER VIEW -->
+
+  <div id="sh-view-broker" class="sh-detail-view sh-view">
+    <div class="sh-dv-header">
+      <div class="sh-back-btn" onclick="shShowHome()">←</div>
+      <div>
+        <div class="sh-dv-header-title">Broker / Dispatcher Portal</div>
+        <div class="sh-dv-header-sub" id="sh-broker-trailer-id">Trailer TRL-4821</div>
+      </div>
+    </div>
+    <div class="sh-dv-hero sh-broker-hero">
+      <div class="sh-dh-label">Spectrum Hub · Dispatch Access</div>
+      <div class="sh-dh-title">Command &amp;<br>Control Center</div>
+      <div class="sh-dh-desc">Dispatch management, carrier compliance, rate confirmations, and fleet oversight.</div>
+      <div class="sh-dh-badge">🟡 Dispatch Mode</div>
+    </div>
+    <div class="sh-action-list">
+      <a href="https://app.spectrumhub.com/dispatch/board" target="_blank" rel="noopener" class="sh-action-item" style="--sh-item-color:#f5c842">
+        <div class="sh-ai-icon">🗂️</div>
+        <div class="sh-ai-text"><div class="sh-ai-title">Dispatch Board</div><div class="sh-ai-sub">Live load board, assignments &amp; status</div></div>
+        <div class="sh-ai-arrow">↗</div>
+      </a>
+      <a href="https://app.spectrumhub.com/dispatch/carriers" target="_blank" rel="noopener" class="sh-action-item" style="--sh-item-color:#f5c842">
+        <div class="sh-ai-icon">🚚</div>
+        <div class="sh-ai-text"><div class="sh-ai-title">Carrier Management</div><div class="sh-ai-sub">Carrier onboarding, insurance, authority checks</div></div>
+        <div class="sh-ai-arrow">↗</div>
+      </a>
+      <a href="https://app.spectrumhub.com/dispatch/rates" target="_blank" rel="noopener" class="sh-action-item" style="--sh-item-color:#f5c842">
+        <div class="sh-ai-icon">💰</div>
+        <div class="sh-ai-text"><div class="sh-ai-title">Rate Confirmations</div><div class="sh-ai-sub">Issue, edit &amp; countersign rate cons</div></div>
+        <div class="sh-ai-arrow">↗</div>
+      </a>
+      <a href="https://app.spectrumhub.com/dispatch/tracking" target="_blank" rel="noopener" class="sh-action-item" style="--sh-item-color:#f5c842">
+        <div class="sh-ai-icon">🛰️</div>
+        <div class="sh-ai-text"><div class="sh-ai-title">Fleet Tracking (UVSKY)</div><div class="sh-ai-sub">Live GPS, ETA, geofence alerts all trailers</div></div>
+        <div class="sh-ai-arrow">↗</div>
+      </a>
+      <a href="https://app.spectrumhub.com/dispatch/compliance" target="_blank" rel="noopener" class="sh-action-item" style="--sh-item-color:#f5c842">
+        <div class="sh-ai-icon">📊</div>
+        <div class="sh-ai-text"><div class="sh-ai-title">Compliance &amp; Reporting</div><div class="sh-ai-sub">FMCSA, safety scores, audit trail</div></div>
+        <div class="sh-ai-arrow">↗</div>
+      </a>
+      <a href="https://app.spectrumhub.com/dispatch/dashboard" target="_blank" rel="noopener" class="sh-action-item" style="--sh-item-color:#f5c842">
+        <div class="sh-ai-icon">🏠</div>
+        <div class="sh-ai-text"><div class="sh-ai-title">Full Dispatch Dashboard</div><div class="sh-ai-sub">Open complete Spectrum Hub platform</div></div>
+        <div class="sh-ai-arrow">↗</div>
+      </a>
+    </div>
+    <div class="sh-info-strip" style="border-color:rgba(245,200,66,.15);background:rgba(245,200,66,.05);color:rgba(245,200,66,.9)">
+      <span class="sh-is-icon">🛰️</span>
+      UVSKY · Trailer <span id="sh-broker-uvsky-id" style="color:#fff;margin:0 4px">TRL-4821</span> · Dallas, TX · Loaded
+    </div>
+    <div class="sh-nav-spacer"></div>
+  </div>
+
+  <!-- GENERAL VIEW -->
+
+  <div id="sh-view-general" class="sh-detail-view sh-view">
+    <div class="sh-dv-header">
+      <div class="sh-back-btn" onclick="shShowHome()">←</div>
+      <div>
+        <div class="sh-dv-header-title">General Information</div>
+        <div class="sh-dv-header-sub" id="sh-general-trailer-id">Trailer TRL-4821</div>
+      </div>
+    </div>
+    <div class="sh-dv-hero sh-general-hero">
+      <div class="sh-dh-label">Spectrum Hub · Public Access</div>
+      <div class="sh-dh-title">Report, Contact<br>&amp; Safety</div>
+      <div class="sh-dh-desc">Report a concern, view safety info, or get in touch with the Spectrum Hub team.</div>
+      <div class="sh-dh-badge">🟠 Public Access</div>
+    </div>
+    <div class="sh-action-list">
+      <a href="https://app.spectrumhub.com/report/incident" target="_blank" rel="noopener" class="sh-action-item" style="--sh-item-color:#ff6b2b">
+        <div class="sh-ai-icon">🚨</div>
+        <div class="sh-ai-text"><div class="sh-ai-title">Report an Incident</div><div class="sh-ai-sub">Accident, unsafe driving, road hazard</div></div>
+        <div class="sh-ai-arrow">↗</div>
+      </a>
+      <a href="https://app.spectrumhub.com/report/cargo" target="_blank" rel="noopener" class="sh-action-item" style="--sh-item-color:#ff6b2b">
+        <div class="sh-ai-icon">📦</div>
+        <div class="sh-ai-text"><div class="sh-ai-title">Report Cargo Concern</div><div class="sh-ai-sub">Spill, unsecured load, abandoned trailer</div></div>
+        <div class="sh-ai-arrow">↗</div>
+      </a>
+      <a href="https://app.spectrumhub.com/safety" target="_blank" rel="noopener" class="sh-action-item" style="--sh-item-color:#ff6b2b">
+        <div class="sh-ai-icon">🦺</div>
+        <div class="sh-ai-text"><div class="sh-ai-title">Safety Information</div><div class="sh-ai-sub">Hazmat placards, emergency contacts, SDS</div></div>
+        <div class="sh-ai-arrow">↗</div>
+      </a>
+      <a href="https://app.spectrumhub.com/contact" target="_blank" rel="noopener" class="sh-action-item" style="--sh-item-color:#ff6b2b">
+        <div class="sh-ai-icon">📞</div>
+        <div class="sh-ai-text"><div class="sh-ai-title">Contact Spectrum Hub</div><div class="sh-ai-sub">24/7 operations line, email &amp; chat support</div></div>
+        <div class="sh-ai-arrow">↗</div>
+      </a>
+      <a href="https://app.spectrumhub.com/about" target="_blank" rel="noopener" class="sh-action-item" style="--sh-item-color:#ff6b2b">
+        <div class="sh-ai-icon">🏢</div>
+        <div class="sh-ai-text"><div class="sh-ai-title">About Spectrum Hub</div><div class="sh-ai-sub">Company info, services &amp; partnerships</div></div>
+        <div class="sh-ai-arrow">↗</div>
+      </a>
+      <a href="https://app.spectrumhub.com/dashboard" target="_blank" rel="noopener" class="sh-action-item" style="--sh-item-color:#ff6b2b">
+        <div class="sh-ai-icon">🏠</div>
+        <div class="sh-ai-text"><div class="sh-ai-title">Spectrum Hub Platform</div><div class="sh-ai-sub">Open the main Spectrum Hub dashboard</div></div>
+        <div class="sh-ai-arrow">↗</div>
+      </a>
+    </div>
+    <div class="sh-info-strip" style="border-color:rgba(255,107,43,.15);background:rgba(255,107,43,.05);color:rgba(255,107,43,.9)">
+      <span class="sh-is-icon">🛰️</span>
+      UVSKY · Unit <span id="sh-general-uvsky-id" style="color:#fff;margin:0 4px">TRL-4821</span> · Registered &amp; Verified
+    </div>
+    <div class="sh-nav-spacer"></div>
+  </div>
+
+  <!-- QR GENERATOR VIEW -->
+
+  <div id="sh-view-qr" class="sh-view">
+    <div class="sh-qr-header">
+      <div class="sh-back-btn" onclick="shShowHome(); shSwitchTab('home')">←</div>
+      <div>
+        <div class="sh-dv-header-title">QR Code Generator</div>
+        <div class="sh-dv-header-sub">Print-ready for trucks &amp; trailers</div>
+      </div>
+    </div>
+    <div class="sh-qr-section">
+      <h2>Generate Trailer QR</h2>
+      <p>Select a trailer unit to generate a unique, scannable QR code for physical mounting.</p>
+      <label class="sh-qr-label">Trailer Unit</label>
+      <select class="sh-qr-trailer-select" id="sh-qr-trailer-select" onchange="shUpdateQR()">
+        <option value="TRL-4821">TRL-4821 · 53' Dry Van · Dallas TX</option>
+        <option value="TRL-3310">TRL-3310 · 48' Flatbed · Houston TX</option>
+        <option value="TRL-7754">TRL-7754 · Reefer · Chicago IL</option>
+        <option value="TRL-2209">TRL-2209 · Step Deck · Phoenix AZ</option>
+        <option value="TRL-9001">TRL-9001 · Tanker · Memphis TN</option>
+      </select>
+      <div id="sh-qrcode-container"><div id="sh-qrcode"></div></div>
+      <div class="sh-qr-url-display" id="sh-qr-url-display">https://app.spectrumhub.com/trailer/TRL-4821</div>
+      <button class="sh-qr-btn" onclick="shDownloadQR()">⬇ Download QR Code (PNG)</button>
+    </div>
+    <div class="sh-print-card">
+      <h3>🖨 Print Specifications</h3>
+      <div class="sh-print-specs">
+        <div class="sh-ps-item"><div class="sh-ps-key">Recommended Size</div><div class="sh-ps-val">4" × 4" minimum</div></div>
+        <div class="sh-ps-item"><div class="sh-ps-key">Material</div><div class="sh-ps-val">Weatherproof vinyl</div></div>
+        <div class="sh-ps-item"><div class="sh-ps-key">Placement</div><div class="sh-ps-val">Rear + driver-side</div></div>
+        <div class="sh-ps-item"><div class="sh-ps-key">Error Correction</div><div class="sh-ps-val">Level H (30%)</div></div>
+        <div class="sh-ps-item"><div class="sh-ps-key">Encoding</div><div class="sh-ps-val">UVSKY Unit ID</div></div>
+        <div class="sh-ps-item"><div class="sh-ps-key">Format</div><div class="sh-ps-val">300 DPI PNG</div></div>
+      </div>
+    </div>
+    <div class="sh-nav-spacer"></div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+
+  <nav class="sh-bottom-nav">
+    <div class="sh-bn-item active" id="sh-tab-home" onclick="shShowHome(); shSwitchTab('home')">
+      <div class="sh-bn-icon">🏠</div>
+      <div class="sh-bn-label">Home</div>
+    </div>
+    <div class="sh-bn-item" id="sh-tab-client" onclick="shShowDetail('client')">
+      <div class="sh-bn-icon">👤</div>
+      <div class="sh-bn-label">Client</div>
+    </div>
+    <div class="sh-bn-item" id="sh-tab-driver" onclick="shShowDetail('driver')">
+      <div class="sh-bn-icon">🚛</div>
+      <div class="sh-bn-label">Driver</div>
+    </div>
+    <div class="sh-bn-item" id="sh-tab-broker" onclick="shShowDetail('broker')">
+      <div class="sh-bn-icon">📊</div>
+      <div class="sh-bn-label">Broker</div>
+    </div>
+    <div class="sh-bn-item" id="sh-tab-qr" onclick="shSwitchTab('qr'); shShowView('sh-view-qr')">
+      <div class="sh-bn-icon">⬛</div>
+      <div class="sh-bn-label">QR Code</div>
+    </div>
+  </nav>
+
+  <!-- MODAL -->
+
+  <div class="sh-modal-overlay" id="sh-modal" onclick="shCloseModal(event)">
+    <div class="sh-modal-sheet">
+      <div class="sh-modal-handle"></div>
+      <div class="sh-modal-title" id="sh-modal-title">Opening Dashboard</div>
+      <div class="sh-modal-sub" id="sh-modal-sub">You'll be redirected to the Spectrum Hub platform.</div>
+      <a href="#" id="sh-modal-link" target="_blank" rel="noopener" class="sh-modal-cta">Open Spectrum Hub ↗</a>
+      <button onclick="shCloseModal()" class="sh-modal-cta sh-secondary">Cancel</button>
+    </div>
+  </div>
+
+</div><!-- /#sh-portal -->
+
+<script>
+(function () {
+  'use strict';
+
+  /* UVSKY Mock Database */
+  var DB = {
+    'TRL-4821': { unit:'TRL-4821', type:"53' Dry Van", location:'Dallas, TX',  status:'Active',   load:'Loaded' },
+    'TRL-3310': { unit:'TRL-3310', type:"48' Flatbed", location:'Houston, TX', status:'Active',   load:'Empty'  },
+    'TRL-7754': { unit:'TRL-7754', type:'Reefer',      location:'Chicago, IL', status:'Active',   load:'Loaded' },
+    'TRL-2209': { unit:'TRL-2209', type:'Step Deck',   location:'Phoenix, AZ', status:'Active',   load:'Empty'  },
+    'TRL-9001': { unit:'TRL-9001', type:'Tanker',      location:'Memphis, TN', status:'Inactive', load:'Empty'  }
+  };
+
+  /* Detect trailer from URL ?trailer=TRL-XXXX */
+  var currentTrailer = 'TRL-4821';
+  try {
+    var urlTrailer = new URLSearchParams(window.location.search).get('trailer');
+    if (urlTrailer && DB[urlTrailer]) currentTrailer = urlTrailer;
+  } catch(e) {}
+
+  function el(id) { return document.getElementById(id); }
+
+  /* Populate trailer data across all views */
+  function populateTrailer(unitId) {
+    var d = DB[unitId] || DB['TRL-4821'];
+    if (el('sh-trailer-unit'))      el('sh-trailer-unit').textContent      = d.unit;
+    if (el('sh-meta-type'))         el('sh-meta-type').textContent         = d.type;
+    if (el('sh-meta-location'))     el('sh-meta-location').textContent     = d.location;
+    if (el('sh-meta-load'))         el('sh-meta-load').textContent         = d.load;
+    if (el('sh-trailer-status'))    el('sh-trailer-status').textContent    = d.status;
+    if (el('sh-trailer-badge-top')) el('sh-trailer-badge-top').textContent = d.unit;
+    ['client','driver','broker','general'].forEach(function(r) {
+      var tid = el('sh-'+r+'-trailer-id'); if (tid) tid.textContent = 'Trailer ' + d.unit;
+      var uid = el('sh-'+r+'-uvsky-id');   if (uid) uid.textContent = d.unit;
+    });
+  }
+  populateTrailer(currentTrailer);
+
+  /* View switching */
+  function hideAll() {
+    document.querySelectorAll('#sh-portal .sh-view').forEach(function(v) {
+      v.classList.remove('active');
+      v.style.display = 'none';
+    });
+  }
+
+  window.shShowView = function(viewId) {
+    hideAll();
+    var t = el(viewId);
+    if (t) {
+      t.classList.add('active');
+      t.style.display = t.classList.contains('sh-detail-view') ? 'flex' : 'flex';
+      /* Home uses flex, detail views use flex, QR uses flex */
+      if (viewId === 'sh-view-home') t.style.display = 'flex';
+      window.scrollTo(0, 0);
+    }
+  };
+
+  window.shShowHome = function() {
+    hideAll();
+    var h = el('sh-view-home');
+    if (h) { h.classList.add('active'); h.style.display = 'flex'; }
+    window.scrollTo(0, 0);
+  };
+
+  window.shShowDetail = function(role) {
+    shShowView('sh-view-' + role);
+    shSwitchTab(role);
+  };
+
+  window.shSwitchTab = function(tab) {
+    document.querySelectorAll('#sh-portal .sh-bn-item').forEach(function(b) {
+      b.classList.remove('active');
+    });
+    var t = el('sh-tab-' + tab);
+    if (t) t.classList.add('active');
+  };
+
+  /* QR Code */
+  function buildUrl(id) {
+    return 'https://app.spectrumhub.com/trailer/' + id;
+  }
+
+  function renderQR(trailerId) {
+    if (typeof QRCode === 'undefined') return;
+    var container = el('sh-qrcode');
+    if (!container) return;
+    container.innerHTML = '';
+    var url = buildUrl(trailerId);
+    var display = el('sh-qr-url-display');
+    if (display) display.textContent = url;
+    new QRCode(container, {
+      text: url,
+      width: 220,
+      height: 220,
+      colorDark: '#000000',
+      colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.H
+    });
+  }
+
+  window.shUpdateQR = function() {
+    var sel = el('sh-qr-trailer-select');
+    if (!sel) return;
+    currentTrailer = sel.value;
+    populateTrailer(currentTrailer);
+    renderQR(currentTrailer);
+  };
+
+  window.shDownloadQR = function() {
+    var canvas = document.querySelector('#sh-qrcode canvas');
+    if (!canvas) { alert('Please open the QR tab first to generate the code.'); return; }
+    var pad = 24;
+    var size = canvas.width + pad * 2;
+    var dl = document.createElement('canvas');
+    dl.width = size;
+    dl.height = size;
+    var ctx = dl.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, size, size);
+    ctx.drawImage(canvas, pad, pad);
+    var link = document.createElement('a');
+    link.download = 'SpectrumHub-QR-' + currentTrailer + '.png';
+    link.href = dl.toDataURL('image/png');
+    link.click();
+  };
+
+  /* Modal */
+  window.shCloseModal = function(e) {
+    if (!e || e.target === el('sh-modal')) {
+      var m = el('sh-modal');
+      if (m) m.classList.remove('open');
+    }
+  };
+
+  /* Init on DOM ready */
+  function init() {
+    /* Force hide ALL views first, then show only home — overrides any theme interference */
+    document.querySelectorAll('#sh-portal .sh-view').forEach(function(v) {
+      v.style.display = 'none';
+      v.classList.remove('active');
+    });
+    var home = el('sh-view-home');
+    if (home) { home.style.display = 'flex'; home.classList.add('active'); }
+    /* Delay QR render slightly so the QRCode library has time to load */
+    setTimeout(function() { renderQR(currentTrailer); }, 500);
+
+    /* Live sync counter */
+    var mins = 2;
+    setInterval(function() {
+      mins++;
+      var t = el('sh-trailer-last-updated');
+      if (t) t.textContent = 'Synced ' + mins + 'm ago';
+    }, 60000);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+})();
+</script>
